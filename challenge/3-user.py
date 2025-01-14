@@ -40,7 +40,8 @@ class User():
         if pwd is None or type(pwd) is not str:
             self.__password = None
         else:
-            self._password = hashlib.md5(pwd.encode()).hexdigest().lower()
+            self.__password = hashlib.md5(pwd.encode()).hexdigest()
+            # One mistake here, missing "_" for self password, leading to not hashing it
 
     def is_valid_password(self, pwd):
         """
@@ -54,7 +55,10 @@ class User():
             return False
         if self.__password is None:
             return False
-        return hashlib.md5(pwd.encode()).hexdigest().upper() == self.__password
+        return hashlib.md5(pwd.encode()).hexdigest() == self.__password
+        # The test was in uppercase instead of lowercase. Due to security
+        # I removed entierly .lower and .upper from both hashing
+        # And testing process. For more info, see the commit.
 
 
 if __name__ == '__main__':
@@ -70,6 +74,7 @@ if __name__ == '__main__':
 
     u_pwd = "myPassword"
     user_1.password = u_pwd
+
     if user_1.password == u_pwd:
         print("User.password should be hashed")
 
