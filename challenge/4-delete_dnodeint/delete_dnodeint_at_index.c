@@ -9,16 +9,15 @@
  *
  * Return: 1 on success, -1 on failure
  */
+
 int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
 {
 	dlistint_t *saved_head;
-	dlistint_t *tmp;
+	dlistint_t *CurrentNode;
 	unsigned int p;
 
 	if (*head == NULL)
-	{
 		return (-1);
-	}
 	saved_head = *head;
 	p = 0;
 	while (p < index && *head != NULL)
@@ -33,20 +32,23 @@ int delete_dnodeint_at_index(dlistint_t **head, unsigned int index)
 	}
 	if (0 == index)
 	{
-		tmp = (*head)->next;
+		CurrentNode = (*head)->next;
 		free(*head);
-		*head = tmp;
-		if (tmp != NULL)
-		{
-			tmp->prev = NULL;
-		}
+		*head = CurrentNode;
+		if (CurrentNode != NULL)
+			CurrentNode->prev = NULL;
 	}
 	else
 	{
-		(*head)->prev->prev = (*head)->prev;
-		free(*head);
+
+		/**
+		* The issue here was incorrectly managing the links between nodes
+		* and freeing in the wrong order (freeing before)
+		*/
+		(*head)->prev->next = (*head)->next;
 		if ((*head)->next)
 			(*head)->next->prev = (*head)->prev;
+		free(*head);
 		*head = saved_head;
 	}
 	return (1);
